@@ -1,0 +1,16 @@
+# Virtual environment  
+venv/  
+fastapi-env/  
+
+# Compiled Python files  
+__pycache__/  
+*.pyc  
+*.pyo  
+
+# Database files  
+*.db  
+
+# System/Editor files  
+.vscode/  
+.idea/  
+.DS_Store  

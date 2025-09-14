@@ -11,9 +11,9 @@ router = APIRouter(
 )
 
 @router.post("/")
-def create(blog:schemas.Blog,db:Session = Depends(database.get_db),get_current_user:schemas.User = Depends(oauth2.get_current_user)):
+def create(blog:schemas.Blog,db:Session = Depends(database.get_db),current_user: models.User = Depends(oauth2.get_current_user)):
     # return {"details":f"{blog.title} is interesting","data":blog}
-    new_blog = models.Blog(title = blog.title,description = blog.description , body = blog.body,user_id = get_current_user.user_id)
+    new_blog = models.Blog(title = blog.title,description = blog.description , body = blog.body,user_id = current_user.id)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)

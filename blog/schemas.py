@@ -16,10 +16,11 @@ class ShowUser(BaseModel):
         orm_mode = True
 
 class ShowBlog(BaseModel):
+    id:int
     title:str
     body : str
     owner : Optional[ShowUser]
-
+    
     class Config():
         orm_mode = True
 

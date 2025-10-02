@@ -63,7 +63,11 @@ db:Session = Depends(database.get_db)
     # now check wether the blog is already liked or not
     existing_like = db.query(models.Like).filter(models.Like.blog_id ==id,models.Like.user_id==get_current_user.id).first()
     if existing_like:
-        raise HTTPException(status_code=409,detail = "Already liked")
+        # raise HTTPException(status_code=409,detail = "Already liked")
+        db.delete(existing_like)
+        db.commit()
+        # db.refresh()
+        return {"message": "Like removed (unliked)"}
 
     new_like = models.Like(blog_id=id,user_id=get_current_user.id)
     db.add(new_like)

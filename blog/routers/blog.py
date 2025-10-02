@@ -49,3 +49,33 @@ def update_blog(id,blog:schemas.Blog, db: Session = Depends(database.get_db),get
     blog_db.update(blog.dict())
     db.commit()
     return "blog updated"
+
+@router.post("/blogs/{id}/like")
+async def post_likes(id:int,
+db:Session = Depends(database.get_db)
+,get_current_user:schemas.User = Depends(oauth2.get_current_user)):
+    # first check if blog exist or not
+    blog = db.query(models.Blog).filter(models.Blog.id ==id).first()
+    if not blog:
+        raise HTTPException(status_code=404,detail="blog not found")
+    
+
+    # now check wether the blog is already liked or not
+    existing_like = db.query(models.Like).filter(models.Like.blog_id ==id,models.Like.user_id==get_current_user.id).first()
+    if existing_like:
+        raise HTTPException(status_code=409,detail = "Already liked")
+
+    new_like = models.Like(blog_id=id,user_id=get_current_user.id)
+    db.add(new_like)
+    db.commit()
+    db.refresh(new_like)
+    return {"message" :"BLog liked successfully","like-id":new_like.id}
+
+
+
+# Get likes count
+@router.get("/{id}/likes")
+def get_likes(id:int,db:Session=Depends(database.get_db),get_current_user:schemas.User = Depends(oauth2.get_current_user)):
+    total_likes = db.query(models.Like).filter(models.Like.blog_id==id).count()
+    user_liked = db.query(models.Like).filter(models.Like.blog_id == id,models.Like.user_id==get_current_user.id).first() is not None
+    return {"likes":total_likes,"Liked-by":user_liked}

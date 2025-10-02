@@ -30,5 +30,6 @@ def get_current_user(
     user = db.query(models.User).filter(models.User.email == email).first()
     if user is None:
         raise credentials_exception
-
+    print(user.id)
     return user 
+

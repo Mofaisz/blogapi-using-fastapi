@@ -13,6 +13,7 @@ class Blog(Base):
 
     user_id = Column(Integer,ForeignKey("users_detail.id"))
     owner = relationship("User" , back_populates = "blogs" )
+    like = relationship("Like",back_populates="blog", cascade="all, delete")
     
 
 class User(Base):
@@ -24,3 +25,16 @@ class User(Base):
     password = Column(String, nullable=False)
 
     blogs = relationship("Blog" , back_populates = "owner")
+    like = relationship("Like",back_populates="user", cascade="all, delete")
+
+
+# why we are using Base here 
+#Base tells sqlalchemy this class is orm model
+class Like(Base):
+    __tablename__="like"
+    id = Column(Integer,primary_key=True,index=True)
+    blog_id = Column(Integer, ForeignKey("blogs.id", ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey("users_detail.id", ondelete="CASCADE"))
+
+    blog = relationship("Blog",back_populates="like")
+    user = relationship("User",back_populates="like")

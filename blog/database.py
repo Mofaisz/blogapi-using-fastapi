@@ -5,9 +5,12 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+# load_dotenv(dotenv_path="./.env")
 
 # Get DB URL from .env
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+print("👉 Using database URL:", SQLALCHEMY_DATABASE_URL)
+
 
 if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("DATABASE_URL is missing. Please set it in your .env file.")

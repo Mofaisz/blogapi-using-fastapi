@@ -83,3 +83,30 @@ def get_likes(id:int,db:Session=Depends(database.get_db),get_current_user:schema
     total_likes = db.query(models.Like).filter(models.Like.blog_id==id).count()
     user_liked = db.query(models.Like).filter(models.Like.blog_id == id,models.Like.user_id==get_current_user.id).first() is not None
     return {"likes":total_likes,"Liked-by":user_liked}
+
+
+@router.post("/{id}/comment")
+def add_comment(id:int,content:str ,db:Session = Depends(database.get_db),get_current_user:schemas.User = Depends(oauth2.get_current_user)):
+    # first check if comments exist or not
+    blog = db.query(models.Blog).filter(models.Blog.id == id).first()
+    if not blog:
+        raise HTTPException(status_code=404, detail = "blog not found")
+
+
+    #then checks if user has already commented or not 
+    # existing_comment = db.query(models.Comments).filter(models.Comments.blog_id==id,models.Comments.user_id==get_current_user.id).first()
+    # if existing_comment
+
+    #then add new comment 
+    new_comment = models.Comments(content=content,user_id = get_current_user.id, blog_id = id)
+    db.add(new_comment)
+    db.commit()
+    return {"message" : "comment added successfully"}
+
+
+@router.get("/{id}/comments")
+def get_comments(id:int,db:Session = Depends(database.get_db),get_current_user:schemas.User = Depends(oauth2.get_current_user)):
+
+    get_comment = db.query(models.Comments).filter(models.Comments.blog_id==id).all()
+    total_comment = db.query(models.Comments).filter(models.Comments.blog_id==id).count()
+    return {"comments":get_comment, "total_comment":total_comment}

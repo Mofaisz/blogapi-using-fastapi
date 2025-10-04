@@ -14,6 +14,8 @@ class Blog(Base):
     user_id = Column(Integer,ForeignKey("users_detail.id"))
     owner = relationship("User" , back_populates = "blogs" )
     like = relationship("Like",back_populates="blog", cascade="all, delete")
+    comments = relationship("Comments",back_populates = "blogs")
+
     
 
 class User(Base):
@@ -26,6 +28,7 @@ class User(Base):
 
     blogs = relationship("Blog" , back_populates = "owner")
     like = relationship("Like",back_populates="user", cascade="all, delete")
+    comments = relationship("Comments",back_populates = "user")
 
 
 # why we are using Base here 
@@ -38,3 +41,22 @@ class Like(Base):
 
     blog = relationship("Blog",back_populates="like")
     user = relationship("User",back_populates="like")
+
+
+
+class Comments(Base):
+    __tablename__="comments"
+
+    id = Column(Integer,primary_key=True)
+    content = Column(String,nullable=False)
+
+    user_id = Column(Integer,ForeignKey("users_detail.id",ondelete = "CASCADE"))
+    blog_id =  Column(Integer,ForeignKey("blogs.id"))
+    # we can't use username as foreign key a
+    # user_name = Column(String,ForeignKey("users_detail.name"))
+
+    user = relationship("User",back_populates = "comments")
+    blogs = relationship("Blog", back_populates = "comments")
+
+
+    

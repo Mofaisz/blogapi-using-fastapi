@@ -9,7 +9,7 @@ load_dotenv()
 
 # Get DB URL from .env
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
-print("👉 Using database URL:", SQLALCHEMY_DATABASE_URL)
+# print("👉 Using database URL:", SQLALCHEMY_DATABASE_URL)
 
 
 if not SQLALCHEMY_DATABASE_URL:

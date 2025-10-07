@@ -23,11 +23,13 @@ class ShowBlog(BaseModel):
     
     class Config():
         orm_mode = True
-
+    
 class User(BaseModel):
     name : str
     email : EmailStr
-    password : str
+    # password : str
+
+
 
 
 class Login(BaseModel):
@@ -43,3 +45,22 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: str | None = None
+
+
+class CommentResponse(BaseModel):
+    id: int
+    content: str
+    blog_id: int
+    user_id: int
+    user: Optional[User]  # nested relationship
+
+    class Config:
+        orm_mode = True
+
+
+class ShowComments(BaseModel):
+    comments: List[CommentResponse]
+    total_comment: int
+
+    class Config:
+        orm_mode = True

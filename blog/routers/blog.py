@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from ..repository import blog
 from ..routers import oauth2
+from sqlalchemy.orm import joinedload
 # router = APIRouter(prefix="/blog", tags=["Blogs"])
 router = APIRouter(
     prefix = "/blog",
@@ -104,9 +105,18 @@ def add_comment(id:int,content:str ,db:Session = Depends(database.get_db),get_cu
     return {"message" : "comment added successfully"}
 
 
-@router.get("/{id}/comments")
+
+# schema or response model does matter when you want get the response 
+# to be trimmed or you don;t want the repsonse object to be included 
+# in that repsonse since I don't want password to be included here 
+# so I created the response models and then have not added the password 
+# so that response will not be included in the list
+@router.get("/{id}/comments",response_model = schemas.ShowComments)
 def get_comments(id:int,db:Session = Depends(database.get_db),get_current_user:schemas.User = Depends(oauth2.get_current_user)):
 
-    get_comment = db.query(models.Comments).filter(models.Comments.blog_id==id).all()
+    get_comment =( db.query(models.Comments)
+    .options(joinedload(models.Comments.user))
+    .filter(models.Comments.blog_id==id)
+    .all())
     total_comment = db.query(models.Comments).filter(models.Comments.blog_id==id).count()
     return {"comments":get_comment, "total_comment":total_comment}
